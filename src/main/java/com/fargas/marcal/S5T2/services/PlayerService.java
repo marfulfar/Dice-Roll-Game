@@ -3,6 +3,7 @@ package com.fargas.marcal.S5T2.services;
 
 import com.fargas.marcal.S5T2.dtos.GameDTO;
 import com.fargas.marcal.S5T2.dtos.PlayerDTO;
+import com.fargas.marcal.S5T2.dtos.RankingDTO;
 import com.fargas.marcal.S5T2.entities.Game;
 import com.fargas.marcal.S5T2.entities.Player;
 import com.fargas.marcal.S5T2.repositories.SQLGameRepo;
@@ -10,6 +11,8 @@ import com.fargas.marcal.S5T2.repositories.SQLPlayerRepo;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -37,8 +40,8 @@ public class PlayerService {
     }
 
 
-    public List<PlayerDTO> getAllPlayersDTO() {
-        return sqlPlayerRepo.findAll().stream().map(p-> new PlayerDTO(p.getName())).collect(Collectors.toList());
+    public List<RankingDTO> getAllPlayersDTO() {
+        return calculateRankingAllPlayers();
     }
 
 
@@ -84,6 +87,30 @@ public class PlayerService {
     }
 
     private GameDTO entityToGameDTO(Game game){return mapper.map(game, GameDTO.class);}
+
+    private List<RankingDTO> calculateRankingAllPlayers(){
+
+        List<Player> players = sqlPlayerRepo.findAll();
+        List<Game> games = sqlGameRepo.findAll();
+        List<RankingDTO> ranking = new ArrayList<>();
+        int gamesNum=0, victories=0;
+        float victoriesPerc;
+
+        for (Player player:players) {
+            for (Game game:games) {
+                if (game.getUserID()== player.getId()){
+                    gamesNum++;
+                    if (game.isVictory()){
+                        victories++;
+                    }
+                }
+            }
+            victoriesPerc = Math.round((((float) victories /gamesNum)*100));
+            ranking.add(new RankingDTO(player.getName(), victoriesPerc));
+        }
+
+        return ranking;
+    }
 
 
 }//closes class

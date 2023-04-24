@@ -3,12 +3,14 @@ package com.fargas.marcal.S5T2.controllers;
 
 import com.fargas.marcal.S5T2.dtos.GameDTO;
 import com.fargas.marcal.S5T2.dtos.PlayerDTO;
+import com.fargas.marcal.S5T2.dtos.RankingDTO;
 import com.fargas.marcal.S5T2.services.PlayerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -37,11 +39,11 @@ public class PlayerController {
 
 
     @GetMapping("/players")
-    public ResponseEntity<List<PlayerDTO>> getAllPlayersDTO(){
+    public ResponseEntity<List<RankingDTO>> getAllPlayersDTO(){
 
-        List<PlayerDTO> myListPlayerDTO = playerService.getAllPlayersDTO();
+        List<RankingDTO> myRankingPlayerDTO = playerService.getAllPlayersDTO();
 
-        return (myListPlayerDTO!=null) ? new ResponseEntity<>(myListPlayerDTO,OK) : new ResponseEntity<>(null, ERROR);
+        return (myRankingPlayerDTO!=null) ? new ResponseEntity<>(myRankingPlayerDTO,OK) : new ResponseEntity<>(null, ERROR);
 
     }
 
@@ -71,6 +73,60 @@ public class PlayerController {
         return new ResponseEntity<>(true,OK);
     }
 
+
+    @GetMapping("/players/ranking/winner")
+    public ResponseEntity<RankingDTO> getTopPlayer(){
+
+        //TODO check custom throw
+        RankingDTO myTopRank = playerService.getAllPlayersDTO()
+                .stream()
+                .sorted((p1,p2)-> (int) (p2.getVictoriesPerc()-p1.getVictoriesPerc()))
+                .limit(1)
+                .findFirst()
+                .orElseThrow();
+
+        return new ResponseEntity<>(myTopRank,OK);
+    }
+
+
+    @GetMapping("/players/ranking/loser")
+    public ResponseEntity<RankingDTO> getBottomPlayer(){
+
+        //TODO check custom throw
+        RankingDTO myBottomRank = playerService.getAllPlayersDTO()
+                .stream()
+                .sorted((p1,p2)-> (int) (p1.getVictoriesPerc()-p2.getVictoriesPerc()))
+                .limit(1)
+                .findFirst()
+                .orElseThrow();
+
+        return new ResponseEntity<>(myBottomRank,OK);
+    }
+
+
+    @GetMapping("/players/ranking")
+    public ResponseEntity<RankingDTO> getAverageRank(){
+        long playerNum;
+        List<Float> myBottomRank;
+        float sumPercentage = 0;
+        float averagePerc;
+
+        myBottomRank= playerService.getAllPlayersDTO()
+                .stream()
+                .map(RankingDTO::getVictoriesPerc)
+                .toList();
+
+        playerNum = myBottomRank.size();
+
+        for (Float percentage:myBottomRank) {
+            sumPercentage += percentage;
+        }
+
+        averagePerc = sumPercentage/playerNum;
+
+
+        return new ResponseEntity<>(new RankingDTO("Average all players",averagePerc),OK);
+    }
 
 
 
