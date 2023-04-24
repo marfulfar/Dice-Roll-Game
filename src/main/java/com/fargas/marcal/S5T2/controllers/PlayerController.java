@@ -1,6 +1,7 @@
 package com.fargas.marcal.S5T2.controllers;
 
 
+import com.fargas.marcal.S5T2.dtos.GameDTO;
 import com.fargas.marcal.S5T2.dtos.PlayerDTO;
 import com.fargas.marcal.S5T2.services.PlayerService;
 import org.springframework.http.HttpStatus;
@@ -43,6 +44,34 @@ public class PlayerController {
         return (myListPlayerDTO!=null) ? new ResponseEntity<>(myListPlayerDTO,OK) : new ResponseEntity<>(null, ERROR);
 
     }
+
+
+    @PostMapping("/players/{id}/games")
+    public ResponseEntity<GameDTO> newGame(@PathVariable("id") int id){
+
+        GameDTO myGameDTO = playerService.newGame(id);
+
+        return (myGameDTO!=null) ? new ResponseEntity<>(myGameDTO,OK) : new ResponseEntity<>(null, ERROR);
+    }
+
+    @GetMapping("/players/{id}/games")
+    public ResponseEntity<List<GameDTO>> listAllGamesPlayer(@PathVariable("id") int id){
+
+        List<GameDTO> myListGamesDTO = playerService.listAllGamesPlayer(id);
+
+        return (myListGamesDTO!=null) ? new ResponseEntity<>(myListGamesDTO,OK) : new ResponseEntity<>(null, ERROR);
+    }
+
+
+    @DeleteMapping("/players/{id}/games")
+    public ResponseEntity<Boolean> deleteAllGamesPlayer(@PathVariable("id") int id){
+
+        playerService.deleteAllGamesPlayer(id);
+
+        return new ResponseEntity<>(true,OK);
+    }
+
+
 
 
 
