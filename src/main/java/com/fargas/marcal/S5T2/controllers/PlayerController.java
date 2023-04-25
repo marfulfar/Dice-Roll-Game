@@ -34,11 +34,14 @@ public class PlayerController {
     }
 
 
-    @PutMapping("/players")
-    public ResponseEntity<PlayerDTO> updatePlayerName(@RequestBody PlayerDTO playerDTO){
+    @PutMapping("/players/{id}")
+    public ResponseEntity<PlayerDTO> updatePlayerName(@PathVariable("id") String id, @RequestBody PlayerDTO playerDTO){
 
-        return null;
+        PlayerDTO myPlayerDTO = playerService.updatePlayerName(id, playerDTO.getName());
+
+        return (myPlayerDTO!=null) ? new ResponseEntity<>(myPlayerDTO,OK) : new ResponseEntity<>(null, ERROR);
     }
+
 
     @PostMapping("/players/{id}/games")
     public ResponseEntity<GameDTO> newGame(@PathVariable("id") String id){

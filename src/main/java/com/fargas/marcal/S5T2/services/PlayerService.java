@@ -38,6 +38,16 @@ public class PlayerService {
         return entityToPlayerDTO(mongoPlayerRepo.save(new Player(playerDTO.getName(), timeStamp.toString())));
     }
 
+    public PlayerDTO updatePlayerName(String id, String name) {
+
+        //TODO check throw
+        Player oldPlayer = mongoPlayerRepo.findAll().stream().filter(p->p.getId().contentEquals(id)).findFirst().orElseThrow();
+        oldPlayer.setName(name);
+        mongoPlayerRepo.save(oldPlayer); //Save method in mongo updates teh existing records if ID are equal
+
+        return entityToPlayerDTO(oldPlayer);
+    }
+
 
     public GameDTO newGame(String id) {
         Player myPlayer;
@@ -117,6 +127,7 @@ public class PlayerService {
     }
 
     private GameDTO entityToGameDTO(Game game){return mapper.map(game, GameDTO.class);}
+
 
 
 
