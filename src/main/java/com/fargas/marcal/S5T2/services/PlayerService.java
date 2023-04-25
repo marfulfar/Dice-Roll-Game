@@ -6,99 +6,90 @@ import com.fargas.marcal.S5T2.dtos.PlayerDTO;
 import com.fargas.marcal.S5T2.dtos.RankingDTO;
 import com.fargas.marcal.S5T2.entities.Game;
 import com.fargas.marcal.S5T2.entities.Player;
-import com.fargas.marcal.S5T2.repositories.SQLGameRepo;
-import com.fargas.marcal.S5T2.repositories.SQLPlayerRepo;
+import com.fargas.marcal.S5T2.repositories.MongoGameRepo;
+import com.fargas.marcal.S5T2.repositories.MongoPlayerRepo;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 public class PlayerService {
 
-    private final SQLPlayerRepo sqlPlayerRepo;
-    private final SQLGameRepo sqlGameRepo;
+    private final MongoPlayerRepo mongoPlayerRepo;
+    private final MongoGameRepo mongoGameRepo;
     private final ModelMapper mapper;
 
-    public PlayerService(SQLPlayerRepo sqlPlayerRepo, SQLGameRepo sqlGameRepo, ModelMapper mapper) {
-        this.sqlPlayerRepo = sqlPlayerRepo;
-        this.sqlGameRepo = sqlGameRepo;
+
+    public PlayerService(MongoPlayerRepo mongoPlayerRepo, MongoGameRepo mongoGameRepo, ModelMapper mapper) {
+        this.mongoPlayerRepo = mongoPlayerRepo;
+        this.mongoGameRepo = mongoGameRepo;
         this.mapper = mapper;
     }
 
 
     public PlayerDTO addPlayerDTO(PlayerDTO playerDTO) {
 
-        sqlPlayerRepo.save(DTOPlayertoEntity(playerDTO));
+        LocalDateTime timeStamp = LocalDateTime.now();
 
-        //TODO review what to return in this method
-        return playerDTO;
+        return entityToPlayerDTO(mongoPlayerRepo.save(new Player(playerDTO.getName(), timeStamp.toString())));
     }
 
 
-    public List<RankingDTO> getAllPlayersDTO() {
-        return calculateRankingAllPlayers();
-    }
-
-
-    public GameDTO newGame(int id) {
+    public GameDTO newGame(String id) {
         Player myPlayer;
         byte dice1, dice2;
         boolean victory = false;
         Random rand = new Random();
+        LocalDateTime timeStamp = LocalDateTime.now();
 
         //TODO custom throw
-        myPlayer = sqlPlayerRepo.findById(id).orElseThrow();
-        dice1 = (byte) rand.nextInt(0,7);
-        dice2 = (byte) rand.nextInt(0,7);
+        myPlayer = mongoPlayerRepo.findAll().stream().filter(p->p.getId().contentEquals(id)).findFirst().orElseThrow();
+        dice1 = (byte) rand.nextInt(1,7);
+        dice2 = (byte) rand.nextInt(1,7);
 
         if ((dice1 + dice2)==7){ victory = true; }
 
-        Game newGame = new Game(myPlayer.getId(),dice1,dice2,victory);
+        Game newGame = new Game(myPlayer.getId(),dice1,dice2,victory,timeStamp.toString());
 
-        return entityToGameDTO(sqlGameRepo.save(newGame));
+        return entityToGameDTO(mongoGameRepo.save(newGame));
     }
 
 
-    public List<GameDTO> listAllGamesPlayer(int id) {
-        return sqlGameRepo.findAll().stream().filter(g->g.getUserID() == id).map(this::entityToGameDTO).toList();
+    public List<GameDTO> listAllGamesPlayer(String id) {
+        return mongoGameRepo.findAll().stream().filter(g->g.getUserID().contentEquals(id)).map(this::entityToGameDTO).toList();
     }
 
 
-    public void deleteAllGamesPlayer(int id) {
-        List<Game> listOfGamesPlayer = sqlGameRepo.findAll().stream().filter(g->g.getUserID() == id).toList();
-        sqlGameRepo.deleteAllInBatch(listOfGamesPlayer);
+    public List<RankingDTO> getAllPlayersRanked() {
+        return calculateRankingAllPlayers();
+    }
+
+
+    public void deleteAllGamesPlayer(String id) {
+        List<Game> listOfGamesPlayer = mongoGameRepo.findAll().stream().filter(g->g.getUserID().contentEquals(id)).toList();
+        mongoGameRepo.deleteAll(listOfGamesPlayer);
     }
 
 
 
+///////////////////////////////////////////////////
 
-
-    private Player DTOPlayertoEntity(PlayerDTO playerDTO){
-        return mapper.map(playerDTO, Player.class);
-    }
-
-    private Game DTOGametoEntity(GameDTO gameDTO){
-        return mapper.map(gameDTO, Game.class);
-    }
-
-    private GameDTO entityToGameDTO(Game game){return mapper.map(game, GameDTO.class);}
 
     private List<RankingDTO> calculateRankingAllPlayers(){
 
-        List<Player> players = sqlPlayerRepo.findAll();
-        List<Game> games = sqlGameRepo.findAll();
+        List<Player> players = mongoPlayerRepo.findAll();
+        List<Game> games = mongoGameRepo.findAll();
         List<RankingDTO> ranking = new ArrayList<>();
         int gamesNum=0, victories=0;
         float victoriesPerc;
 
         for (Player player:players) {
             for (Game game:games) {
-                if (game.getUserID()== player.getId()){
+                if (game.getUserID().contentEquals(player.getId())){
                     gamesNum++;
                     if (game.isVictory()){
                         victories++;
@@ -112,5 +103,35 @@ public class PlayerService {
         return ranking;
     }
 
+
+    private Player dtoPlayertoEntity(PlayerDTO playerDTO){
+        return mapper.map(playerDTO, Player.class);
+    }
+
+    private PlayerDTO entityToPlayerDTO(Player player){
+        return mapper.map(player , PlayerDTO.class);
+    }
+
+    private Game dtoGametoEntity(GameDTO gameDTO){
+        return mapper.map(gameDTO, Game.class);
+    }
+
+    private GameDTO entityToGameDTO(Game game){return mapper.map(game, GameDTO.class);}
+
+
+
+    /*
+
+
+
+
+
+
+
+
+
+
+
+     */
 
 }//closes class

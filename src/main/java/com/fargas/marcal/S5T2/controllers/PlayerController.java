@@ -10,27 +10,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
 public class PlayerController {
 
     private final PlayerService playerService;
-
-    private ResponseEntity<PlayerDTO> myResponseDto;
-    private ResponseEntity<List<PlayerDTO>> myResponseListDto;
     private static final HttpStatus OK = HttpStatus.OK;
     private static final HttpStatus ERROR = HttpStatus.INTERNAL_SERVER_ERROR;
+
 
     public PlayerController(PlayerService playerService) {
         this.playerService = playerService;
     }
 
 
-
     @PostMapping("/players")
-    public ResponseEntity<PlayerDTO> addPlayerDTO(@RequestBody PlayerDTO playerDTO){
+    public ResponseEntity<PlayerDTO> addPlayer(@RequestBody PlayerDTO playerDTO){
 
         PlayerDTO myPlayerDTO = playerService.addPlayerDTO(playerDTO);
 
@@ -38,26 +34,23 @@ public class PlayerController {
     }
 
 
-    @GetMapping("/players")
-    public ResponseEntity<List<RankingDTO>> getAllPlayersDTO(){
+    @PutMapping("/players")
+    public ResponseEntity<PlayerDTO> updatePlayerName(@RequestBody PlayerDTO playerDTO){
 
-        List<RankingDTO> myRankingPlayerDTO = playerService.getAllPlayersDTO();
-
-        return (myRankingPlayerDTO!=null) ? new ResponseEntity<>(myRankingPlayerDTO,OK) : new ResponseEntity<>(null, ERROR);
-
+        return null;
     }
 
-
     @PostMapping("/players/{id}/games")
-    public ResponseEntity<GameDTO> newGame(@PathVariable("id") int id){
+    public ResponseEntity<GameDTO> newGame(@PathVariable("id") String id){
 
         GameDTO myGameDTO = playerService.newGame(id);
 
         return (myGameDTO!=null) ? new ResponseEntity<>(myGameDTO,OK) : new ResponseEntity<>(null, ERROR);
     }
 
+
     @GetMapping("/players/{id}/games")
-    public ResponseEntity<List<GameDTO>> listAllGamesPlayer(@PathVariable("id") int id){
+    public ResponseEntity<List<GameDTO>> listAllGamesPlayer(@PathVariable("id") String id){
 
         List<GameDTO> myListGamesDTO = playerService.listAllGamesPlayer(id);
 
@@ -65,8 +58,18 @@ public class PlayerController {
     }
 
 
+    @GetMapping("/players")
+    public ResponseEntity<List<RankingDTO>> getAllPlayersRank(){
+
+        List<RankingDTO> myRankingPlayerDTO = playerService.getAllPlayersRanked();
+
+        return (myRankingPlayerDTO!=null) ? new ResponseEntity<>(myRankingPlayerDTO,OK) : new ResponseEntity<>(null, ERROR);
+
+    }
+
+
     @DeleteMapping("/players/{id}/games")
-    public ResponseEntity<Boolean> deleteAllGamesPlayer(@PathVariable("id") int id){
+    public ResponseEntity<Boolean> deleteAllGamesPlayer(@PathVariable("id") String id){
 
         playerService.deleteAllGamesPlayer(id);
 
@@ -78,7 +81,7 @@ public class PlayerController {
     public ResponseEntity<RankingDTO> getTopPlayer(){
 
         //TODO check custom throw
-        RankingDTO myTopRank = playerService.getAllPlayersDTO()
+        RankingDTO myTopRank = playerService.getAllPlayersRanked()
                 .stream()
                 .sorted((p1,p2)-> (int) (p2.getVictoriesPerc()-p1.getVictoriesPerc()))
                 .limit(1)
@@ -93,7 +96,7 @@ public class PlayerController {
     public ResponseEntity<RankingDTO> getBottomPlayer(){
 
         //TODO check custom throw
-        RankingDTO myBottomRank = playerService.getAllPlayersDTO()
+        RankingDTO myBottomRank = playerService.getAllPlayersRanked()
                 .stream()
                 .sorted((p1,p2)-> (int) (p1.getVictoriesPerc()-p2.getVictoriesPerc()))
                 .limit(1)
@@ -107,28 +110,25 @@ public class PlayerController {
     @GetMapping("/players/ranking")
     public ResponseEntity<RankingDTO> getAverageRank(){
         long playerNum;
-        List<Float> myBottomRank;
+        List<Float> myPercentageRank;
         float sumPercentage = 0;
         float averagePerc;
 
-        myBottomRank= playerService.getAllPlayersDTO()
+        myPercentageRank= playerService.getAllPlayersRanked()
                 .stream()
                 .map(RankingDTO::getVictoriesPerc)
                 .toList();
 
-        playerNum = myBottomRank.size();
+        playerNum = myPercentageRank.size();
 
-        for (Float percentage:myBottomRank) {
+        for (Float percentage:myPercentageRank) {
             sumPercentage += percentage;
         }
 
         averagePerc = sumPercentage/playerNum;
 
-
         return new ResponseEntity<>(new RankingDTO("Average all players",averagePerc),OK);
     }
-
-
 
 
 }//closes class

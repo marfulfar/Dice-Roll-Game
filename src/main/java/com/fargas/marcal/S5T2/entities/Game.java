@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -14,28 +16,28 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="games")
+@Document(collection="games")
 public class Game {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @MongoId
+    private String id;
     @Column
-    private int userID;
+    private String userID;
     @Column
     private byte dice1;
     @Column
     private byte dice2;
     @Column
     private boolean victory;
-    @CreationTimestamp
-    private LocalDateTime timeStamp;
+    @Column
+    private String timeStamp;
 
 
-    public Game(int userID, byte dice1, byte dice2, boolean victory) {
+    public Game(String userID, byte dice1, byte dice2, boolean victory, String timeStamp) {
         this.userID = userID;
         this.dice1 = dice1;
         this.dice2 = dice2;
         this.victory = victory;
+        this.timeStamp = timeStamp;
     }
 }

@@ -5,12 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 
 @Entity
-@Table(name = "players")
+@Document(collection = "players")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -21,13 +25,17 @@ public class Player {
         this.name = name;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    public Player(String name, String dateTime) {
+        this.name = name;
+        this.dateTime = dateTime;
+    }
+
+    @MongoId
+    private String id;
 
     @Column
     private String name;
 
-    @CreationTimestamp
-    private LocalDateTime dateTime;
+    @Column
+    private String dateTime;
 }
