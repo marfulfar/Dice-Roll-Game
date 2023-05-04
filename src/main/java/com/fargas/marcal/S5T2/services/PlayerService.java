@@ -43,9 +43,13 @@ public class PlayerService {
             name="anonymous";
         }else{
             name= playerDTO.getName();
+            List<String> players = mongoPlayerRepo.findAll().stream().map(Player::getName).toList();
+                if (players.contains(name)) {
+                throw new NotFoundException("","");
+                }
         }
 
-        return entityToPlayerDTO(mongoPlayerRepo.save(new Player(name, timeStamp.toString())));
+        return entityToPlayerDTO(mongoPlayerRepo.save(new Player(name,timeStamp.toString())));
     }
 
     public PlayerDTO updatePlayerName(String id, String name) {
