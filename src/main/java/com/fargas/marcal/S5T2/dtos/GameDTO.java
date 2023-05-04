@@ -15,5 +15,5 @@ public class GameDTO {
     private byte dice1;
     private byte dice2;
     private boolean victory;
-    private LocalDateTime timeStamp;
+    private String timeStamp;
 }
