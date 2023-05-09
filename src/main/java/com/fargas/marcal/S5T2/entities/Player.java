@@ -1,16 +1,22 @@
 package com.fargas.marcal.S5T2.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.experimental.FieldDefaults;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
-@Table(name = "players")
+@Document(collection = "players")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -21,13 +27,23 @@ public class Player {
         this.name = name;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    public Player(String name, String dateTime) {
+        this.name = name;
+        this.dateTime = dateTime;
+        this.userGames = new ArrayList<>();
+    }
 
+
+    @MongoId
+    private String id;
+
+    //@Column
     @Column
     private String name;
 
-    @CreationTimestamp
-    private LocalDateTime dateTime;
+    @Column
+    private String dateTime;
+
+    @Column
+    private List<Game> userGames;
 }
