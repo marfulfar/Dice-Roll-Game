@@ -25,7 +25,6 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
 
-
     //TODO both this class methods could be done with just strings as token
     public AuthenticationResponse register(RegisterRequest request) {
         User user = User.builder()
@@ -55,7 +54,6 @@ public class AuthService {
                 .orElseThrow(()-> new NotFoundException("USER_NOT_FOUND", "user not found")); //TODO handle exception
 
         String jwtToken = jwtService.generateToken(user);
-
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 

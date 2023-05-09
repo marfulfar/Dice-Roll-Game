@@ -1,7 +1,5 @@
 package com.fargas.marcal.S5T2.config;
 
-
-import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

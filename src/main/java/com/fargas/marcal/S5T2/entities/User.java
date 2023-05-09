@@ -25,11 +25,7 @@ import java.util.List;
 @Builder
 public class User  implements UserDetails {
 
-    //TODO in Player we use String-id not integer-id
     //TODO not able to check if user table is created because of security required
-
-    //eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0d2lnQCIsImlhdCI6MTY4MzIxMDAyMCwiZXhwIjoxNjgzMjIwMDQwfQ.T74PnktZueuzKdqtQerwKR7IqvxC21pe50BAaoO6bJM
-    //eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0d2lnQCIsImlhdCI6MTY4MzIxMDIwOSwiZXhwIjoxNjgzMjIwMjI5fQ.pW8LT6cguUVDdOjB6ro8dH1ICpOt_MvWwfOr0OaRvAc
 
     @MongoId
     private String id;
