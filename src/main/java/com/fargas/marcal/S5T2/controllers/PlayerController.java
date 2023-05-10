@@ -1,19 +1,12 @@
 package com.fargas.marcal.S5T2.controllers;
 
 
-import com.fargas.marcal.S5T2.services.AuthService;
-import com.fargas.marcal.S5T2.auth.AuthenticationRequest;
-import com.fargas.marcal.S5T2.auth.AuthenticationResponse;
-import com.fargas.marcal.S5T2.auth.RegisterRequest;
 import com.fargas.marcal.S5T2.dtos.GameDTO;
 import com.fargas.marcal.S5T2.dtos.PlayerDTO;
 import com.fargas.marcal.S5T2.dtos.RankingDTO;
-import com.fargas.marcal.S5T2.entities.User;
 import com.fargas.marcal.S5T2.exceptions.NotFoundException;
-import com.fargas.marcal.S5T2.repositories.MongoTokenRepo;
-import com.fargas.marcal.S5T2.services.PlayerService;
+import com.fargas.marcal.S5T2.services.IPlayerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,14 +19,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PlayerController {
 
-    @Autowired
-    private final MongoTokenRepo mongoTokenRepo;
-
-    private final PlayerService playerService;
-    private final AuthService authService;
+    private final IPlayerService playerService;
     private static final HttpStatus OK = HttpStatus.OK;
     private static final HttpStatus ERROR = HttpStatus.INTERNAL_SERVER_ERROR;
-
 
     /*
     The @ExceptionHandler annotation is used to handle exceptions that occur during the execution of a Spring MVC controller.
