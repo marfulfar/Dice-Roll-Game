@@ -1,10 +1,10 @@
 package com.fargas.marcal.S5T2.controllers;
 
 
-import com.fargas.marcal.S5T2.services.AuthService;
 import com.fargas.marcal.S5T2.auth.AuthenticationRequest;
 import com.fargas.marcal.S5T2.auth.AuthenticationResponse;
 import com.fargas.marcal.S5T2.auth.RegisterRequest;
+import com.fargas.marcal.S5T2.services.IAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     @Autowired
-    private final AuthService authService;
+    private final IAuthService authService;
 
 
     @PostMapping("/register")

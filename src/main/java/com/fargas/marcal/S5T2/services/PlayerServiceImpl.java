@@ -8,32 +8,28 @@ import com.fargas.marcal.S5T2.entities.Player;
 import com.fargas.marcal.S5T2.exceptions.NotFoundException;
 import com.fargas.marcal.S5T2.repositories.MongoPlayerRepo;
 import com.mongodb.MongoWriteException;
-import lombok.extern.java.Log;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
-public class PlayerService {
-
-    //TODO create service interface
+public class PlayerServiceImpl implements IPlayerService{
 
     private final MongoPlayerRepo mongoPlayerRepo;
     private final ModelMapper mapper;
 
 
-    public PlayerService(MongoPlayerRepo mongoPlayerRepo, ModelMapper mapper) {
+    public PlayerServiceImpl(MongoPlayerRepo mongoPlayerRepo, ModelMapper mapper) {
         this.mongoPlayerRepo = mongoPlayerRepo;
         this.mapper = mapper;
     }
 
+    //TODO handle exception in add player
 
     public PlayerDTO addPlayerDTO(PlayerDTO playerDTO) {
         String name;
