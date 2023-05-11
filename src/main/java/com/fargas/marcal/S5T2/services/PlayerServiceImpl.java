@@ -20,8 +20,6 @@ import java.util.Random;
 @Service
 public class PlayerServiceImpl implements IPlayerService{
 
-    //TODO create service interface
-
     private final MongoPlayerRepo mongoPlayerRepo;
     private final ModelMapper mapper;
 
@@ -31,6 +29,7 @@ public class PlayerServiceImpl implements IPlayerService{
         this.mapper = mapper;
     }
 
+    //TODO handle exception in add player
 
     public PlayerDTO addPlayerDTO(PlayerDTO playerDTO) {
         String name;
