@@ -25,8 +25,6 @@ import java.util.List;
 @Builder
 public class User  implements UserDetails {
 
-    //TODO not able to check if user table is created because of security required
-
     @MongoId
     private String id;
 

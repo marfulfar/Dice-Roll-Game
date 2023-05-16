@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface MongoTokenRepo extends MongoRepository<User, String> {
 
     Optional<User> findByEmail(String email);
+
 }

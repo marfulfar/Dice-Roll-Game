@@ -1,14 +1,14 @@
 package com.fargas.marcal.S5T2.services;
 
-import com.fargas.marcal.S5T2.auth.AuthenticationRequest;
+import com.fargas.marcal.S5T2.dtos.AuthenticationRequestDTO;
 import com.fargas.marcal.S5T2.auth.AuthenticationResponse;
-import com.fargas.marcal.S5T2.auth.RegisterRequest;
+import com.fargas.marcal.S5T2.dtos.RegisterRequestDTO;
 
 public interface IAuthService {
 
-    public AuthenticationResponse register(RegisterRequest request);
+    public String register(RegisterRequestDTO request);
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request);
+    public String authenticate(AuthenticationRequestDTO request);
 
 
 
