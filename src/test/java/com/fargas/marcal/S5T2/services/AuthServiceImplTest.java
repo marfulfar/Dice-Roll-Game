@@ -1,8 +1,8 @@
 package com.fargas.marcal.S5T2.services;
 
-import com.fargas.marcal.S5T2.auth.AuthenticationRequest;
+import com.fargas.marcal.S5T2.dtos.AuthenticationRequestDTO;
 import com.fargas.marcal.S5T2.auth.AuthenticationResponse;
-import com.fargas.marcal.S5T2.auth.RegisterRequest;
+import com.fargas.marcal.S5T2.dtos.RegisterRequestDTO;
 import com.fargas.marcal.S5T2.config.JwtService;
 import com.fargas.marcal.S5T2.entities.Role;
 import com.fargas.marcal.S5T2.entities.User;
@@ -37,9 +37,9 @@ class AuthServiceImplTest {
     private AuthenticationManager authenticationManager;
     private User user;
 
-    private RegisterRequest regRequest;
+    private RegisterRequestDTO regRequest;
     private UsernamePasswordAuthenticationToken userPassAuthToken;
-    private AuthenticationRequest authRequest;
+    private AuthenticationRequestDTO authRequest;
 
 
     @BeforeEach
@@ -47,9 +47,9 @@ class AuthServiceImplTest {
         MockitoAnnotations.openMocks(this);
 
         user = new User("1","test","test@","test111",Role.USER);
-        regRequest = new RegisterRequest("test","test@","test111");
+        regRequest = new RegisterRequestDTO("test","test@","test111");
         userPassAuthToken = new UsernamePasswordAuthenticationToken(regRequest.getEmail(), regRequest.getPassword());
-        authRequest = new AuthenticationRequest(regRequest.getEmail(),regRequest.getPassword());
+        authRequest = new AuthenticationRequestDTO(regRequest.getEmail(),regRequest.getPassword());
 
     }
 
@@ -60,10 +60,10 @@ class AuthServiceImplTest {
         when(tokenRepo.save(any())).thenReturn(user);
         when(passwordEncoder.encode(any())).thenReturn(regRequest.getPassword());
 
-        AuthenticationResponse token = (authService.register(regRequest));
+        String token = (authService.register(regRequest));
 
         verify(tokenRepo).save(any());
-        assertEquals("token",token.getToken());
+        assertEquals("token",token);
     }
 
     @Test
@@ -73,10 +73,10 @@ class AuthServiceImplTest {
         when(tokenRepo.findByEmail(any())).thenReturn(Optional.of(user));
         when(authenticationManager.authenticate(any())).thenReturn(userPassAuthToken);
 
-        AuthenticationResponse token = (authService.authenticate(authRequest));
+        String token = (authService.authenticate(authRequest));
 
 
         verify(tokenRepo).findByEmail(any());
-        assertEquals("token",token.getToken());
+        assertEquals("token",token);
     }
 }

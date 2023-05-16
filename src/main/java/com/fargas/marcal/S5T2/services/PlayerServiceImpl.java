@@ -29,7 +29,6 @@ public class PlayerServiceImpl implements IPlayerService{
         this.mapper = mapper;
     }
 
-    //TODO handle exception in add player
 
     public PlayerDTO addPlayerDTO(PlayerDTO playerDTO) {
         String name;
@@ -41,7 +40,7 @@ public class PlayerServiceImpl implements IPlayerService{
             name= playerDTO.getName();
             List<String> players = mongoPlayerRepo.findAll().stream().map(Player::getName).toList();
                 if (players.contains(name)) {
-                throw new NotFoundException("","");
+                throw new NotFoundException("Player name repeated","Player name repeated");
                 }
         }
 
@@ -102,7 +101,7 @@ public class PlayerServiceImpl implements IPlayerService{
         myPlayer.getUserGames().clear();
 
         try{
-            mongoPlayerRepo.save(myPlayer); //Save method in mongo updates teh existing records if ID are equal
+            mongoPlayerRepo.save(myPlayer); //Save method in mongo updates the existing records if ID are equal
 
         }catch(DataAccessException | MongoWriteException exception) {
             throw new DataAccessResourceFailureException("Deletion not complete", exception);

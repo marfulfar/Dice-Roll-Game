@@ -1,9 +1,9 @@
 package com.fargas.marcal.S5T2.services;
 
 
-import com.fargas.marcal.S5T2.auth.AuthenticationRequest;
+import com.fargas.marcal.S5T2.dtos.AuthenticationRequestDTO;
 import com.fargas.marcal.S5T2.auth.AuthenticationResponse;
-import com.fargas.marcal.S5T2.auth.RegisterRequest;
+import com.fargas.marcal.S5T2.dtos.RegisterRequestDTO;
 import com.fargas.marcal.S5T2.config.JwtService;
 import com.fargas.marcal.S5T2.entities.Role;
 import com.fargas.marcal.S5T2.entities.User;
@@ -26,7 +26,7 @@ public class AuthServiceImpl implements IAuthService{
 
 
     //TODO both this class methods could be done with just strings as token
-    public AuthenticationResponse register(RegisterRequest request) {
+    public String register(RegisterRequestDTO request) {
         User user = User.builder()
                 .name(request.getFirstName())
                 .email(request.getEmail())
@@ -36,12 +36,12 @@ public class AuthServiceImpl implements IAuthService{
 
         tokenRepo.save(user);
 
-        String jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        //String jwtToken = jwtService.generateToken(user);
+        return jwtService.generateToken(user);
     }
 
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public String authenticate(AuthenticationRequestDTO request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -51,10 +51,10 @@ public class AuthServiceImpl implements IAuthService{
 
         User user = tokenRepo
                 .findByEmail(request.getEmail())
-                .orElseThrow(()-> new NotFoundException("USER_NOT_FOUND", "user not found")); //TODO handle exception
+                .orElseThrow(()-> new NotFoundException("USER_NOT_FOUND", "user not found"));
 
-        String jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        //String jwtToken = jwtService.generateToken(user);
+        return jwtService.generateToken(user);
     }
 
 

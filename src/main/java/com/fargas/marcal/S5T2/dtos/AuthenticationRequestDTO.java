@@ -1,4 +1,4 @@
-package com.fargas.marcal.S5T2.auth;
+package com.fargas.marcal.S5T2.dtos;
 
 
 import lombok.AllArgsConstructor;
@@ -7,13 +7,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
 @NoArgsConstructor
+public class AuthenticationRequestDTO {
 
-public class RegisterRequest {
-
-    private String firstName;
     private String email;
     private String password;
 }
